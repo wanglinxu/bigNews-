@@ -79,11 +79,11 @@
                 type:'get',
                 dataType:'json',
                 success: function(backData){
-                    console.log(backData);
+                    // console.log(backData);
                     // 显示到页面
-                    $('user_pic').attr('src',backData.data.user_pic);
+                    $('.user_pic').attr('src',backData.data.userPic);
                     for(var key in backData.data) {
-                        console.log(key,backData.data[key]);
+                       // console.log(key,backData.data[key]);
                         $('input.' + key).val(backData.data[key]);
                         // $('input.username').val(backData.data.username);
                         // $('input.nickname').val(backData.data.nickname);
@@ -92,6 +92,46 @@
                     }
                 }
             });
+
+            //2 文件预览： 固定四个步骤
+            // 1.给file表单元素注册onchangge事件
+            $('#exampleInputFile').change(function() {
+                // 1.2 获取用户选择的图片
+                var file = this.files[0];
+                // console.log(file);
+                // 1.3 将文件转为src路径
+                var url = URL.createObjectURL(file);
+                //1.4 将url路径赋值给img标签的src
+                $('.user_pic').attr('src',url);
+            })
+
+            // 3. 修改个人信息： FormData提交文件
+            $('.btn-edit').on('click',function(e) {
+                //禁用表单默认提交事件
+                e.preventDefault();
+                //创建FormData对象：参数是表单dom对象
+                var fd = new FormData($('#form')[0]);
+                $.ajax({
+                    url:BigNew.user_edit,
+                    type:'post',
+                    dataType:'json',
+                    data:fd,
+                    contentType: false,
+                    processData: false,
+                    success: function(backData){
+                        console.log(backData);
+                        if(backData.code == 200) {
+                            alert(backData.msg);
+                            //刷新页面
+                           /* 
+                           window:当前窗口  user.html
+                           window.parent:当前窗口的父窗口 index.html
+                           */
+                          window.parent.location.reload();
+                        }
+                    }
+                });
+            })
         })
     </script>
 </body>
